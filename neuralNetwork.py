@@ -15,21 +15,30 @@ def main(inpDim, outDim):
 		print 'Invalid matrix dimensions'
 		sys.exit(1)
 
+	# Parse uniqueBoardStates.txt for boardStates and corresponding statePlays
+	boardStates = []
+	statePlays = []
 	with open('uniqueBoardStates.txt') as boardInp:
+		states = []
+		plays = []
+
+		# Collect states and plays from file
 		for line in boardInp:
-			parts = line.split('[')
-			statesStr = parts[0].splitlines()
-			playsStr = parts[1].splitlines()
-			states = []
-			plays = []
+			parts = line.split(' ')
+			stateStr = str(parts[0])
+			playStr = str(parts[1]).replace('\n', '')
 
-			# Parse states
-			for state in statesStr:
-				states.append(state)
+			states.append(stateStr)
+			plays.append(playStr)
 
-			# Parse plays
-			for play in playsStr:
-				print play
+		# Parse each boardState to produce matrix
+		for state in states:
+			boardStates.append(parseBoard(state))
+
+		# Map statePlays for each boardState
+		for play in plays:
+			playMap = map(int, play.split(','))
+			statePlays.append(playMap.index(max(playMap)))
 
 	exit()
 
@@ -63,6 +72,9 @@ def main(inpDim, outDim):
 				weights = modWeights(weights, inp[i], error)
 
 	print weights
+
+def getMaxPlay(plays):
+	return plays.index(max(plays))
 
 def parseBoard(state):
 	board = []
